@@ -2,7 +2,7 @@
 ### Runs selenium scripts in parallel on Crossbrowsertesting.com
 #### Written in Java
 
-There are 2 ways to implements:
+There are 2 ways to implement tests in parallel:
 
 1. Uses JUnit and "Parallized" class that multithreads the JUnit Tests
 
