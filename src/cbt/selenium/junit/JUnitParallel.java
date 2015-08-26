@@ -25,13 +25,15 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 @RunWith(Parallelized.class)
 public class JUnitParallel {
   private String username = "mikeh";
-  private String api_key = "u31631e932d1e9be";
+  private String api_key = "";
   private String os;
   private String browser;
 
   @Parameterized.Parameters
   public static LinkedList<String[]> getEnvironments() throws Exception {
     LinkedList<String[]> env = new LinkedList<String[]>();
+
+    //define OS's and browsers
     env.add(new String[]{"Win7x64-C2", "IE10"});
     env.add(new String[]{"Win8.1", "Chrome43x64"});
 
