@@ -4,6 +4,9 @@
 // Unirest is the recommended way to interact with RESTful APIs in Java
 // http://unirest.io/java.html
 
+// runs test against http://crossbrowsertesting.github.io/selenium_example_page.html
+
+
 import java.net.URL;
 
 import org.openqa.selenium.remote.DesiredCapabilities;

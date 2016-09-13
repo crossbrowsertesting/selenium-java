@@ -4,6 +4,8 @@
 // Unirest is the recommended way to interact with RESTful APIs in Java
 // http://unirest.io/java.html
 
+// runs test against http://crossbrowsertesting.github.io/todo-app.html
+
 import java.net.URL;
 import java.util.List;
 
@@ -32,7 +34,7 @@ class TodoAppTest {
 
         DesiredCapabilities caps = new DesiredCapabilities();
 
-        caps.setCapability("name", "Selenium Test Example");
+        caps.setCapability("name", " Todo App - Selenium Test Example");
         caps.setCapability("build", "1.0");
         caps.setCapability("browser_api_name", "IE10");
         caps.setCapability("os_api_name", "Win7x64-C2");
