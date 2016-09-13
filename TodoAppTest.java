@@ -1,33 +1,40 @@
+// Getting started: http://docs.seleniumhq.org/docs/03_webdriver.jsp
+// API details: https://github.com/SeleniumHQ/selenium#selenium 
+
+// Unirest is the recommended way to interact with RESTful APIs in Java
+// http://unirest.io/java.html
+
 import java.net.URL;
 import java.util.List;
 
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.By;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
-import junit.framework.Assert;
-
-import org.openqa.selenium.By;
+import static org.junit.Assert.*;
 
 
 class TodoAppTest {
+
     static String username = "user@email.com"; // Your username
     static String authkey = "12345";  // Your authkey
     String testScore = "unset";
 
     public static void main(String[] args) throws Exception {
+        
         TodoAppTest myTest = new TodoAppTest();
 
         DesiredCapabilities caps = new DesiredCapabilities();
 
-        caps.setCapability("name", "Todo App - Selenium Test Example");
+        caps.setCapability("name", "Selenium Test Example");
         caps.setCapability("build", "1.0");
-        caps.setCapability("browser_api_name", "FF42");
+        caps.setCapability("browser_api_name", "IE10");
         caps.setCapability("os_api_name", "Win7x64-C2");
         caps.setCapability("screen_resolution", "1024x768");
         caps.setCapability("record_video", "true");
@@ -36,25 +43,28 @@ class TodoAppTest {
 
         RemoteWebDriver driver = new RemoteWebDriver(new URL("http://" + username + ":" + authkey +"@hub.crossbrowsertesting.com:80/wd/hub"), caps);
         System.out.println(driver.getSessionId());
+        
         // we wrap the test in a try catch loop so we can log assert failures in our system
         try {
+
             // load the page url
             System.out.println("Loading Url");
             driver.get("http://crossbrowsertesting.github.io/todo-app.html");
+
             // maximize the window - DESKTOPS ONLY
             //System.out.println("Maximizing window");
-            driver.manage().window().maximize();
+            //driver.manage().window().maximize();
             
             System.out.println("Checking Box");
             driver.findElement(By.name("todo-4")).click();
 
-            System.out.println("Checking Box");
+            System.out.println("Checking Another Box");
             driver.findElement(By.name("todo-5")).click();
             
             // If both clicks worked, then the following List should be have length 2
-            List<WebElement> elems = driver.findElements(By.className("done-true"));
+            List elems = driver.findElements(By.className("done-true"));
             // So we'll assert that this is correct.
-            Assert.assertEquals(2, elems.size());
+            assertEquals(2, elems.size());
             
             System.out.println("Entering Text");
             driver.findElement(By.id("todotext")).sendKeys("Run your first Selenium Test");
@@ -62,7 +72,7 @@ class TodoAppTest {
             
             // Let's also assert that the todo we added is present in the list.
             String spanText = driver.findElementByXPath("/html/body/div/div/div/ul/li[6]/span").getText();
-            Assert.assertEquals("Run your first Selenium Test", spanText);
+            assertEquals("Run your first Selenium Test", spanText);
             
             System.out.println("Archiving old todos");
             driver.findElement(By.linkText("archive")).click();
@@ -70,23 +80,32 @@ class TodoAppTest {
             // If our archive link worked, then the following list should have length 4.
             elems = driver.findElements(By.className("done-false"));
             // So will assert that this is true as well.
-            Assert.assertEquals(4, elems.size());
+            assertEquals(4, elems.size());
             
             
             System.out.println("Taking Snapshot");
             myTest.takeSnapshot(driver.getSessionId().toString());
+
             // if we get to this point, then all the assertions have passed
             // that means that we can set the score to pass in our system
-            System.out.println("Test set to pass");
             myTest.testScore = "pass"; 
         }
         catch(AssertionError ae) {
-            // if we have an assertion error, take a snapshot of where the test fails
+
+             // if we have an assertion error, take a snapshot of where the test fails
             // and set the score to "fail"
+            String snapshotHash = myTest.takeSnapshot(driver.getSessionId().toString());
+            myTest.setDescription(driver.getSessionId().toString(), snapshotHash, ae.toString());
             myTest.testScore = "fail";
-        } finally {
+
+        } 
+        finally {
+
+            System.out.println("Test complete: " + myTest.testScore);
+
             // here we make an api call to actually send the score 
             myTest.setScore(driver.getSessionId().toString(), myTest.testScore);
+            
             // and quit the driver
             driver.quit();
         }
@@ -114,7 +133,7 @@ class TodoAppTest {
                 .asJson(); 
         // grab out the snapshot "hash" from the response
         String snapshotHash = (String) response.getBody().getObject().get("hash");
-        System.out.println(snapshotHash);
+        
         return snapshotHash;
     }
     
