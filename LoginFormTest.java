@@ -4,102 +4,89 @@
 // Unirest is the recommended way to interact with RESTful APIs in Java
 // http://unirest.io/java.html
 
-// runs test against http://crossbrowsertesting.github.io/todo-app.html
-
 import java.net.URL;
-import java.util.List;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import junit.framework.Assert;
 
-import static org.junit.Assert.*;
 
-
-class TodoAppTest {
+class LoginFormTest {
 
     static String username = "user%40email.com"; // Your username
     static String authkey = "12345";  // Your authkey
     String testScore = "unset";
 
     public static void main(String[] args) throws Exception {
-        
-        TodoAppTest myTest = new TodoAppTest();
+        BasicTest myTest = new BasicTest();
 
         DesiredCapabilities caps = new DesiredCapabilities();
 
-        caps.setCapability("name", " Todo App Example");
+        caps.setCapability("name", "Login Form Example");
         caps.setCapability("build", "1.0");
-        caps.setCapability("browser_api_name", "IE10");
-        caps.setCapability("os_api_name", "Win7x64-C2");
+        caps.setCapability("browser_api_name", "Chrome53");
+        caps.setCapability("os_api_name", "Win10");
         caps.setCapability("screen_resolution", "1024x768");
         caps.setCapability("record_video", "true");
         caps.setCapability("record_network", "true");
 
 
+        
         RemoteWebDriver driver = new RemoteWebDriver(new URL("http://" + username + ":" + authkey +"@hub.crossbrowsertesting.com:80/wd/hub"), caps);
         System.out.println(driver.getSessionId());
-        
+
         // we wrap the test in a try catch loop so we can log assert failures in our system
         try {
 
             // load the page url
             System.out.println("Loading Url");
-            driver.get("http://crossbrowsertesting.github.io/todo-app.html");
-
+            driver.get("http://crossbrowsertesting.github.io/login-form.html");
+            
             // maximize the window - DESKTOPS ONLY
             //System.out.println("Maximizing window");
             //driver.manage().window().maximize();
             
-            System.out.println("Checking Box");
-            driver.findElement(By.name("todo-4")).click();
-
-            System.out.println("Checking Another Box");
-            driver.findElement(By.name("todo-5")).click();
+            // complete a short login form
+            // first by entering the username
+            System.out.println("Entering username");
+            driver.findElementByName("username").sendKeys("tester@crossbrowsertesting.com");
             
-            // If both clicks worked, then the following List should be have length 2
-            List elems = driver.findElements(By.className("done-true"));
-            // So we'll assert that this is correct.
-            assertEquals(2, elems.size());
+            // then by entering the password
+            System.out.println("Entering password");
+            driver.findElementByName("password").sendKeys("test123");
             
-            System.out.println("Entering Text");
-            driver.findElement(By.id("todotext")).sendKeys("Run your first Selenium Test");
-            driver.findElement(By.id("addbutton")).click();
+            // then by clicking the login button
+            System.out.println("Logging in");
+            driver.findElementByCssSelector("div.form-actions > button").click();
             
-            // Let's also assert that the todo we added is present in the list.
-            String spanText = driver.findElementByXPath("/html/body/div/div/div/ul/li[6]/span").getText();
-            assertEquals("Run your first Selenium Test", spanText);
+            // let's wait here to ensure the page has loaded completely
+            WebDriverWait wait = new WebDriverWait(driver, 10);
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"logged-in-message\"]/h2")));
             
-            System.out.println("Archiving old todos");
-            driver.findElement(By.linkText("archive")).click();
+            // Let's assert that the welcome message is present on the page. 
+            // if not, an exception will be raised and we'll set the score to fail in the catch block.
+            String welcomeMessage = driver.findElementByXPath("//*[@id=\"logged-in-message\"]/h2").getText();
+            Assert.assertEquals("Welcome tester@crossbrowsertesting.com", welcomeMessage);
             
-            // If our archive link worked, then the following list should have length 4.
-            elems = driver.findElements(By.className("done-false"));
-            // So will assert that this is true as well.
-            assertEquals(4, elems.size());
-            
-            
-            System.out.println("Taking Snapshot");
-            myTest.takeSnapshot(driver.getSessionId().toString());
-
             // if we get to this point, then all the assertions have passed
             // that means that we can set the score to pass in our system
             myTest.testScore = "pass"; 
         }
         catch(AssertionError ae) {
 
-             // if we have an assertion error, take a snapshot of where the test fails
+            // if we have an assertion error, take a snapshot of where the test fails
             // and set the score to "fail"
             String snapshotHash = myTest.takeSnapshot(driver.getSessionId().toString());
             myTest.setDescription(driver.getSessionId().toString(), snapshotHash, ae.toString());
             myTest.testScore = "fail";
-
         } 
         finally {
 

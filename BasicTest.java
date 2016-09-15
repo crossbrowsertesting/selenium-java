@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 
 class BasicTest {
 
-    static String username = "user@email.com"; // Your username
+    static String username = "user%40email.com"; // Your username
     static String authkey = "12345";  // Your authkey
     String testScore = "unset";
 
@@ -31,7 +31,7 @@ class BasicTest {
 
         DesiredCapabilities caps = new DesiredCapabilities();
 
-        caps.setCapability("name", "Basic - Selenium Test Example");
+        caps.setCapability("name", "Basic Example");
         caps.setCapability("build", "1.0");
         caps.setCapability("browser_api_name", "IE10");
         caps.setCapability("os_api_name", "Win7x64-C2");
