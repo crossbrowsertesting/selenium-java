@@ -26,7 +26,7 @@ class LoginFormTest {
     String testScore = "unset";
 
     public static void main(String[] args) throws Exception {
-        BasicTest myTest = new BasicTest();
+        LoginFormTest myTest = new LoginFormTest();
 
         DesiredCapabilities caps = new DesiredCapabilities();
 
