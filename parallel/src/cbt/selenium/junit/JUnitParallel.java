@@ -34,8 +34,8 @@ public class JUnitParallel {
     LinkedList<String[]> env = new LinkedList<String[]>();
 
     //define OS's and browsers
-    env.add(new String[]{"Win7x64-C2", "IE10"});
-    env.add(new String[]{"Win8.1", "Chrome43x64"});
+    env.add(new String[]{"Win10", "chrome-latest"});
+    env.add(new String[]{"Win10", "ff-latest"});
 
     //add more browsers here
 

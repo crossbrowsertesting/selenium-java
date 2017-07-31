@@ -36,9 +36,9 @@ class TodoAppTest {
 
         caps.setCapability("name", " Todo App Example");
         caps.setCapability("build", "1.0");
-        caps.setCapability("browser_api_name", "IE10");
-        caps.setCapability("os_api_name", "Win7x64-C2");
-        caps.setCapability("screen_resolution", "1024x768");
+        caps.setCapability("browser_api_name", "chrome-latest");            // request the latest version of chrome
+        caps.setCapability("os_api_name", "Win10");
+        caps.setCapability("screen_resolution", "1366x768");
         caps.setCapability("record_video", "true");
         caps.setCapability("record_network", "true");
 

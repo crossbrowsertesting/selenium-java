@@ -2,15 +2,15 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite thread-count="2" name="Suite" parallel="tests">
   <test name="FirstTest">
-  <parameter name="os" value="Win7x64-C2"/>
-  <parameter name="browser" value="IE10"/>
+  <parameter name="os" value="Win10"/>
+  <parameter name="browser" value="chrome-latest"/>
     <classes>
       <class name="cbt.selenium.testng.TestCase"/>
     </classes>
   </test> <!-- Test -->
   <test name="SecondTest">
-  <parameter name="os" value="Win8.1"/>
-  <parameter name="browser" value="Chrome43x64"/>
+  <parameter name="os" value="Win10"/>
+  <parameter name="browser" value="ff-latest"/>
     <classes>
       <class name="cbt.selenium.testng.TestCase"/>
     </classes>
