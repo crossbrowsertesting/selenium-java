@@ -18,7 +18,7 @@ public class CBTExample {
 		DesiredCapabilities caps = new DesiredCapabilities();
 		caps.setCapability("name", "CBTExample");
 		caps.setCapability("browserName", "Internet Explorer");
-		caps.setCapability("version", "10");
+		caps.setCapability("version", "10"); // If this cap isn't specified, it will just get the latest one
 		caps.setCapability("platform", "Windows 7 64-Bit");
 		caps.setCapability("screenResolution", "1366x768");
 		RemoteWebDriver driver = null;
