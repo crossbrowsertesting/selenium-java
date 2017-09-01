@@ -32,8 +32,8 @@ class LoginFormTest {
 
         caps.setCapability("name", "Login Form Example");
         caps.setCapability("build", "1.0");
-        caps.setCapability("browser_api_name", "chrome-latest");            // request the latest version of chrome
-        caps.setCapability("os_api_name", "Win10");
+        caps.setCapability("browserName", "Chrome");            // request the latest version of chrome by default
+        caps.setCapability("platform", "Windows 10");           // To specify version, setCapability("version", "desired version")
         caps.setCapability("screen_resolution", "1366x768");
         caps.setCapability("record_video", "true");
         caps.setCapability("record_network", "true");
