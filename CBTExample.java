@@ -12,18 +12,21 @@ public class CBTExample {
 	public static void main(String[] args) {
 		String username = "chase@crossbrowsertesting.com";
 		String authkey = "notmyauthkey";
-		
+
 		CBTExample cbt = new CBTExample(username,authkey);
-		
+
 		DesiredCapabilities caps = new DesiredCapabilities();
 		caps.setCapability("name", "CBTExample");
 		caps.setCapability("browserName", "Internet Explorer");
 		caps.setCapability("version", "10"); // If this cap isn't specified, it will just get the latest one
 		caps.setCapability("platform", "Windows 7 64-Bit");
 		caps.setCapability("screenResolution", "1366x768");
+		caps.setCapability("record_video", "true");
+		caps.setCapability("record_network", "false");
+		
 		RemoteWebDriver driver = null;
 		String score = null;
-		
+
 		try {
 			driver = new RemoteWebDriver(cbt.getHubUrl(), caps);
 			cbt.setSessionId(driver.getSessionId().toString());
@@ -31,16 +34,16 @@ public class CBTExample {
 			cbt.takeSnapshot();
 			cbt.setDescription("CBT Test");
 
-			// depending on whether the value of the title is correct, 
+			// depending on whether the value of the title is correct,
 			// set the score to pass or fail via CBT's API
 			if (driver.getTitle().equals("Cross Browser Testing Tool: 1500+ Real Browsers & Devices"))
 				score = "pass";
-			 else 
+			 else
 				score = "fail";
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 		} finally {
-			if (driver != null) 
+			if (driver != null)
 				driver.quit();
 			cbt.setScore(score);
 		}
@@ -49,26 +52,26 @@ public class CBTExample {
 	private String sessionId,username,authkey;
 	private String apiUrl = "crossbrowsertesting.com/api/v3/selenium";
 	public CBTExample(String username, String authkey) {
-		// for java URL's must be character incoded. If you use 
+		// for java URL's must be character incoded. If you use
 		// your email, let's replace that character
 
 		if (username.contains("@")) {
 			username = username.replace("@", "%40");
-		} 
+		}
 		this.username = username;
 		this.authkey = authkey;
 	}
-	
+
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
 	}
-	
+
 	public void setScore(String score) {
 		String url = "https://" + apiUrl + "/" + this.sessionId;
 		String payload = "{\"action\": \"set_score\", \"score\": \"" + score + "\"}";
 		makeRequest("PUT", url,payload);
 	}
-	
+
 	public void takeSnapshot() {
 		if (this.sessionId != null) {
 			String url = "https://" + apiUrl + "/" + this.sessionId + "/snapshots";
@@ -76,13 +79,13 @@ public class CBTExample {
 			makeRequest("POST",url,payload);
 		}
 	}
-	
+
 	public void setDescription(String desc) {
 		String url = "https://" + apiUrl + "/" + this.sessionId;
 		String payload = "{\"action\": \"set_description\", \"description\": \"" + desc + "\"}";
 		makeRequest("PUT", url,payload);
 	}
-	
+
 	private void makeRequest(String requestMethod, String apiUrl, String payload) {
 		URL url;
 		String auth = "";
@@ -106,7 +109,7 @@ public class CBTExample {
         	System.out.println(e.getMessage());
         }
 	}
-	
+
 	public URL getHubUrl() {
 		URL hubUrl = null;
 		try {

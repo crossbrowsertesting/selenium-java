@@ -1,5 +1,5 @@
 // Getting started: http://docs.seleniumhq.org/docs/03_webdriver.jsp
-// API details: https://github.com/SeleniumHQ/selenium#selenium 
+// API details: https://github.com/SeleniumHQ/selenium#selenium
 
 // Unirest is the recommended way to interact with RESTful APIs in Java
 // http://unirest.io/java.html
@@ -36,10 +36,10 @@ class LoginFormTest {
         caps.setCapability("platform", "Windows 10");           // To specify version, setCapability("version", "desired version")
         caps.setCapability("screen_resolution", "1366x768");
         caps.setCapability("record_video", "true");
-        caps.setCapability("record_network", "true");
+        caps.setCapability("record_network", "false");
 
 
-        
+
         RemoteWebDriver driver = new RemoteWebDriver(new URL("http://" + username + ":" + authkey +"@hub.crossbrowsertesting.com:80/wd/hub"), caps);
         System.out.println(driver.getSessionId());
 
@@ -49,36 +49,36 @@ class LoginFormTest {
             // load the page url
             System.out.println("Loading Url");
             driver.get("http://crossbrowsertesting.github.io/login-form.html");
-            
+
             // maximize the window - DESKTOPS ONLY
             //System.out.println("Maximizing window");
             //driver.manage().window().maximize();
-            
+
             // complete a short login form
             // first by entering the username
             System.out.println("Entering username");
             driver.findElementByName("username").sendKeys("tester@crossbrowsertesting.com");
-            
+
             // then by entering the password
             System.out.println("Entering password");
             driver.findElementByName("password").sendKeys("test123");
-            
+
             // then by clicking the login button
             System.out.println("Logging in");
             driver.findElementByCssSelector("div.form-actions > button").click();
-            
+
             // let's wait here to ensure the page has loaded completely
             WebDriverWait wait = new WebDriverWait(driver, 10);
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"logged-in-message\"]/h2")));
-            
-            // Let's assert that the welcome message is present on the page. 
+
+            // Let's assert that the welcome message is present on the page.
             // if not, an exception will be raised and we'll set the score to fail in the catch block.
             String welcomeMessage = driver.findElementByXPath("//*[@id=\"logged-in-message\"]/h2").getText();
             Assert.assertEquals("Welcome tester@crossbrowsertesting.com", welcomeMessage);
-            
+
             // if we get to this point, then all the assertions have passed
             // that means that we can set the score to pass in our system
-            myTest.testScore = "pass"; 
+            myTest.testScore = "pass";
         }
         catch(AssertionError ae) {
 
@@ -87,14 +87,14 @@ class LoginFormTest {
             String snapshotHash = myTest.takeSnapshot(driver.getSessionId().toString());
             myTest.setDescription(driver.getSessionId().toString(), snapshotHash, ae.toString());
             myTest.testScore = "fail";
-        } 
+        }
         finally {
 
             System.out.println("Test complete: " + myTest.testScore);
 
-            // here we make an api call to actually send the score 
+            // here we make an api call to actually send the score
             myTest.setScore(driver.getSessionId().toString(), myTest.testScore);
-            
+
             // and quit the driver
             driver.quit();
         }
@@ -119,15 +119,15 @@ class LoginFormTest {
         HttpResponse<JsonNode> response = Unirest.post("http://crossbrowsertesting.com/api/v3/selenium/{seleniumTestId}/snapshots")
                 .basicAuth(username, authkey)
                 .routeParam("seleniumTestId", seleniumTestId)
-                .asJson(); 
+                .asJson();
         // grab out the snapshot "hash" from the response
         String snapshotHash = (String) response.getBody().getObject().get("hash");
-        
+
         return snapshotHash;
     }
-    
+
     public JsonNode setDescription(String seleniumTestId, String snapshotHash, String description) throws UnirestException{
-        /* 
+        /*
          * sets the description for the given seleniemTestId and snapshotHash
          */
         HttpResponse<JsonNode> response = Unirest.put("http://crossbrowsertesting.com/api/v3/selenium/{seleniumTestId}/snapshots/{snapshotHash}")

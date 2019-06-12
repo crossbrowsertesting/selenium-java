@@ -1,5 +1,5 @@
 // Getting started: http://docs.seleniumhq.org/docs/03_webdriver.jsp
-// API details: https://github.com/SeleniumHQ/selenium#selenium 
+// API details: https://github.com/SeleniumHQ/selenium#selenium
 
 // Unirest is the recommended way to interact with RESTful APIs in Java
 // http://unirest.io/java.html
@@ -33,14 +33,14 @@ class BasicTest {
 
         caps.setCapability("name", "Basic Example");
         caps.setCapability("build", "1.0");
-        caps.setCapability("browserName", "Chrome");    // By default this will request the latest version of Chrome        
+        caps.setCapability("browserName", "Chrome");    // By default this will request the latest version of Chrome
         caps.setCapability("platform", "Windows 10");   // To specify version, you'll need setCapability("version", "whatever version"
         caps.setCapability("screen_resolution", "1366x768");
         caps.setCapability("record_video", "true");
-        caps.setCapability("record_network", "true");
+        caps.setCapability("record_network", "false");
 
 
-        
+
         RemoteWebDriver driver = new RemoteWebDriver(new URL("http://" + username + ":" + authkey +"@hub.crossbrowsertesting.com:80/wd/hub"), caps);
         System.out.println(driver.getSessionId());
 
@@ -50,18 +50,18 @@ class BasicTest {
             // load the page url
             System.out.println("Loading Url");
             driver.get("http://crossbrowsertesting.github.io/selenium_example_page.html");
-            
+
             // maximize the window - DESKTOPS ONLY
             //System.out.println("Maximizing window");
             //driver.manage().window().maximize();
-            
+
             // Check the page title (try changing to make the assertion fail!)
             System.out.println("Checking title");
             assertEquals(driver.getTitle(), "Selenium Test Example Page");
-            
+
             // if we get to this point, then all the assertions have passed
             // that means that we can set the score to pass in our system
-            myTest.testScore = "pass"; 
+            myTest.testScore = "pass";
         }
         catch(AssertionError ae) {
 
@@ -70,14 +70,14 @@ class BasicTest {
             String snapshotHash = myTest.takeSnapshot(driver.getSessionId().toString());
             myTest.setDescription(driver.getSessionId().toString(), snapshotHash, ae.toString());
             myTest.testScore = "fail";
-        } 
+        }
         finally {
 
             System.out.println("Test complete: " + myTest.testScore);
 
-            // here we make an api call to actually send the score 
+            // here we make an api call to actually send the score
             myTest.setScore(driver.getSessionId().toString(), myTest.testScore);
-            
+
             // and quit the driver
             driver.quit();
         }
@@ -102,15 +102,15 @@ class BasicTest {
         HttpResponse<JsonNode> response = Unirest.post("http://crossbrowsertesting.com/api/v3/selenium/{seleniumTestId}/snapshots")
                 .basicAuth(username, authkey)
                 .routeParam("seleniumTestId", seleniumTestId)
-                .asJson(); 
+                .asJson();
         // grab out the snapshot "hash" from the response
         String snapshotHash = (String) response.getBody().getObject().get("hash");
-        
+
         return snapshotHash;
     }
-    
+
     public JsonNode setDescription(String seleniumTestId, String snapshotHash, String description) throws UnirestException{
-        /* 
+        /*
          * sets the description for the given seleniemTestId and snapshotHash
          */
         HttpResponse<JsonNode> response = Unirest.put("http://crossbrowsertesting.com/api/v3/selenium/{seleniumTestId}/snapshots/{snapshotHash}")
